@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Society HomeChef</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header id="app-header" class="hidden">
+        <div class="logo">🍳 Society HomeChef</div>
+        <div class="user-info">
+            <span id="user-name-display" class="text-muted"></span>
+            <span id="user-role-badge" class="stat-badge"></span>
+            <button id="logout-btn" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Auth View -->
+        <div id="auth-view" class="form-container glass">
+            <h2 id="auth-title">Welcome Back</h2>
+            <p class="text-muted mb-2">Login to your account</p>
+            
+            <form id="auth-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="e.g. resident1">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+                
+                <div id="role-group" class="form-group hidden">
+                    <label for="role">Role</label>
+                    <select id="role">
+                        <option value="resident">Resident (Customer)</option>
+                        <option value="chef">HomeChef</option>
+                        <option value="rider">Rider</option>
+                    </select>
+                </div>
+                
+                <button type="submit" id="auth-submit" class="primary">Login</button>
+            </form>
+            
+            <p class="toggle-link" id="auth-toggle">Don't have an account? <span>Sign up</span></p>
+        </div>
+
+        <!-- Chef Dashboard -->
+        <div id="chef-view" class="hidden">
+            <div class="dashboard-header">
+                <h2>Chef Dashboard</h2>
+                <button id="add-dish-btn" class="primary" style="width: auto; padding: 0.8rem 1.5rem;">+ Publish Dish</button>
+            </div>
+            <h3>Your Active Listings</h3>
+            <div id="chef-dishes-grid" class="grid">
+                <!-- Populated by JS -->
+            </div>
+            
+            <h3 class="mt-2">Incoming Orders</h3>
+            <div id="chef-orders-container" class="glass mt-2 mb-2">
+                <!-- Populated by JS -->
+            </div>
+
+            <h3 class="mt-2">Activity History</h3>
+            <div id="chef-history-container" class="glass mt-2">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Resident Dashboard -->
+        <div id="resident-view" class="hidden">
+            <div class="dashboard-header">
+                <h2>Today's Specials</h2>
+            </div>
+            
+            <!-- Feed -->
+            <div id="resident-feed-grid" class="grid">
+                <!-- Populated by JS -->
+            </div>
+
+            <h3 class="mt-2">Active Orders</h3>
+            <div id="resident-orders-container" class="glass mt-2 mb-2">
+                <!-- Populated by JS -->
+            </div>
+
+            <h3 class="mt-2">Activity History</h3>
+            <div id="resident-history-container" class="glass mt-2">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Rider Dashboard -->
+        <div id="rider-view" class="hidden">
+            <div class="dashboard-header">
+                <h2>Rider Dashboard</h2>
+                <div class="toggle-container">
+                    <span class="text-muted">Status:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="rider-status-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="rider-status-text" style="font-weight: 600;">Offline</span>
+                </div>
+            </div>
+            
+            <h3>Available Deliveries</h3>
+            <div id="rider-available-orders" class="glass mb-2">
+                <!-- Populated by JS -->
+            </div>
+
+            <h3>Active Deliveries</h3>
+            <div id="rider-active-orders" class="glass">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Dish Modal -->
+    <div id="add-dish-modal" class="modal-overlay">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3>Publish Dish of the Day</h3>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <form id="add-dish-form">
+                <div class="form-group">
+                    <label>Dish Name</label>
+                    <input type="text" id="dish-name" required placeholder="e.g. Butter Paneer Masala">
+                </div>
+                <div class="form-group">
+                    <label>Price (₹)</label>
+                    <input type="number" id="dish-price" required min="1" placeholder="150">
+                </div>
+                <div class="form-group">
+                    <label>Quantity Available</label>
+                    <input type="number" id="dish-qty" required min="1" placeholder="10">
+                </div>
+                <div class="form-group">
+                    <label>Image URL (Optional Demo Image)</label>
+                    <input type="text" id="dish-image" placeholder="https://example.com/image.jpg">
+                </div>
+                <!-- AI Note -->
+                <div class="mb-2" style="background: rgba(16,185,129,0.1); padding: 1rem; border-radius: 8px; font-size: 0.85rem; color: var(--primary);">
+                    ✨ <strong>AI Nutrition Estimation</strong><br>Calories and health score will be automatically generated based on the dish name when you publish.
+                </div>
+                <button type="submit" class="primary">Publish Dish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal-overlay">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3>Select Payment Mode</h3>
+                <button id="close-payment-btn" class="close-btn">&times;</button>
+            </div>
+            <form id="payment-form">
+                <div class="form-group">
+                    <label>Mode of Payment</label>
+                    <select id="payment-mode" required>
+                        <option value="Online (UPI)">Online (UPI)</option>
+                        <option value="Credit/Debit Card">Credit/Debit Card</option>
+                        <option value="Cash on Delivery">Cash on Delivery</option>
+                    </select>
+                </div>
+                <button type="submit" class="primary">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="rating-modal" class="modal-overlay">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3>Rate your Dish</h3>
+                <button id="close-rating-btn" class="close-btn">&times;</button>
+            </div>
+            <form id="rating-form">
+                <div class="form-group">
+                    <label>Rating (1 to 5 Stars)</label>
+                    <select id="dish-rating" required>
+                        <option value="5">⭐⭐⭐⭐⭐ (5 - Excellent)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 - Good)</option>
+                        <option value="3">⭐⭐⭐ (3 - Average)</option>
+                        <option value="2">⭐⭐ (2 - Poor)</option>
+                        <option value="1">⭐ (1 - Terrible)</option>
+                    </select>
+                </div>
+                <button type="submit" class="primary">Submit Rating</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
